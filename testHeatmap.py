@@ -18,7 +18,7 @@ fig, axs = plt.subplots(1, 1)
 x = np.random.randn(1000)
 y = np.random.randn(1000)
 
-sigmas = [0, 16, 32, 64]
+# sigmas = [0, 16, 32, 64]
 
 # for ax in axs.flatten():
 #     img, extent = myplot(x, y, 64)

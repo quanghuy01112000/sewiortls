@@ -78,13 +78,14 @@ def readTag():
 color = ['b', 'r', 'm', 'y', 'c', 'k', 'g']
 arrayAnchor = ControllerRFID.getAllAnchorData()
 arrayTag = ControllerRFID.getAllTagData()
-indexColor = 0;
+indexColor = 1;
 for i in range(len(arrayTag)):
-    arrayTag[i].setColor(color[indexColor])
-    # if(indexColor >= len(color)):
-    #     indexColor = 0
-    # else:
-    #     indexColor = indexColor + 1
+    arrayTag[i].setColor(color[indexColor-1])
+    if indexColor >= 7:
+        indexColor = 0
+    else:
+        indexColor = indexColor + 1
+
 
 for tag in arrayTag:
     tag.printData()

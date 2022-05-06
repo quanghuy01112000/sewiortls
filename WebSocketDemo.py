@@ -52,18 +52,17 @@ def read():
             print(data)
             # for tag in arrayTag:
                 # print(data[0], tag.getID())
-            tag = Tag()
+
 
 
             x.append(data[1])
             y.append(data[2])
             a = ax.flatten()
             a[0].scatter(x, y, color='r')
-            a[0].plot(x, y, color='r',
-                    label=str(tag.getID()))
+            a[0].plot(x, y, color='r')
 
             img, extent = myplot(x, y, 64)
-            a[0].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
+            a[1].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
             if time.time() > timeout:
                 # loop.stop()
                 # loop.
