@@ -42,6 +42,7 @@ def myplot(x, y, s, bins=1000):
 fig, ax = plt.subplots(2, 1)
 # ax.invert_yaxis()
 plt.subplots_adjust(left=0.3)
+# fig.tight_layout(pad=3.0)
 x,y = [], []
 def read():
     while True:
@@ -58,11 +59,14 @@ def read():
             x.append(data[1])
             y.append(data[2])
             a = ax.flatten()
+
             a[0].scatter(x, y, color='r')
             a[0].plot(x, y, color='r')
+            # a[0].subplots_adjust(left=0.3, top=0.1, bottom=0.1)
 
             img, extent = myplot(x, y, 64)
-            a[1].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
+            a[0].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
+            a[0].set_title("Smoothing with  $\sigma$ = %d" % 64)
             if time.time() > timeout:
                 # loop.stop()
                 # loop.

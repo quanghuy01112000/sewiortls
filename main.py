@@ -1,14 +1,12 @@
-import random
-import matplotlib.pyplot as plt
 import numpy as np
 import asyncio
 import jmespath
 import json
 import websockets
 import time
-from matplotlib.widgets import Button
-from numpy import mean
-from asgiref.sync import sync_to_async
+from matplotlib import pyplot as plt, cm
+from matplotlib.widgets import Button, RadioButtons
+from scipy.ndimage import gaussian_filter
 from Controller.ControllerRFID import ControllerRFID
 
 
@@ -30,19 +28,32 @@ async def runTag():
         return data
 
 
-
 def show(event):
-    # ax.clear()
+    a[0].clear()
     print("yolo")
-    ax.scatter(x, y, label='anchor', color='g')
+    a[0].scatter(x, y, label='anchor', color='g')
     readTag()
-    ax.invert_yaxis()
-    ax.legend()
+    a[0].invert_yaxis()
+    a[0].legend()
+    a[1].invert_yaxis()
     # ax.draw()
+
+
+def myplot(x, y, s, bins=1000):
+    heatmap, xedges, yedges = np.histogram2d(x, y, bins=bins)
+    heatmap = gaussian_filter(heatmap, sigma=s)
+
+    extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+    return heatmap.T, extent
+
 
 def readTag():
     timeout = time.time() + 10
     loop = asyncio.get_event_loop()
+
+    headmapid = 12
+    xheadmap = []
+    yheadmap = []
     while True:
         data = loop.run_until_complete(runTag())
         if data != None:
@@ -54,14 +65,26 @@ def readTag():
                     tag.setCheck(False)
                     tag.addXCoordinates(data[1])
                     tag.addYCoordinates(data[2])
-                    ax.scatter(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor())
-                    ax.plot(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor(),
-                            label=str(tag.getID()))
+                    a[0].scatter(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor())
+                    a[0].plot(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor(),
+                              label=str(tag.getID()))
+                    print(tag.getID())
+                    print(arrayTag[0].getID())
+                    xheadmap.append(data[1])
+                    yheadmap.append(data[2])
+                    img, extent = myplot(xheadmap, yheadmap, 64)
+                    a[1].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
                 elif str(data[0]) == str(tag.getID()):
                     tag.addXCoordinates(data[1])
                     tag.addYCoordinates(data[2])
-                    ax.scatter(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor())
-                    ax.plot(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor())
+                    a[0].scatter(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor())
+                    a[0].plot(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), color=tag.getColor())
+                    print(tag.getID())
+                    print(arrayTag[0].getID())
+                    xheadmap.append(data[1])
+                    yheadmap.append(data[2])
+                    img, extent = myplot(xheadmap, yheadmap, 64)
+                    a[1].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
         else:
             print('none')
         if time.time() > timeout:
@@ -80,12 +103,11 @@ arrayAnchor = ControllerRFID.getAllAnchorData()
 arrayTag = ControllerRFID.getAllTagData()
 indexColor = 1;
 for i in range(len(arrayTag)):
-    arrayTag[i].setColor(color[indexColor-1])
+    arrayTag[i].setColor(color[indexColor - 1])
     if indexColor >= 7:
         indexColor = 0
     else:
         indexColor = indexColor + 1
-
 
 for tag in arrayTag:
     tag.printData()
@@ -99,16 +121,40 @@ for i in range(len(arrayAnchor)):
     # y.append(anchor.getCurrentValuePosY())
 
 # plt.connect('button_press_event', start)
-ax = plt.subplot(111)
+fig, ax = plt.subplots(2, 1)
 # ax.invert_yaxis()
 plt.subplots_adjust(left=0.3)
-
+a = ax.flatten()
 # ax.scatter(x, y, label='anchor', color='g')
 axcut_show_anchor = plt.axes([0.05, 0.7, 0.15, 0.10])
-bcut_show_anchor = Button(axcut_show_anchor, 'Show Anchor', color='g', hovercolor='y')
+bcut_show_anchor = Button(axcut_show_anchor, 'Show', color='g', hovercolor='y')
 bcut_show_anchor.on_clicked(show)
 
+# adjust radio buttons
+axcolor = 'lightgoldenrodyellow'
+rax = plt.axes([0.05, 0.2, 0.15, 0.50],
+               facecolor=axcolor)
+arrayid = []
+for tag in arrayTag:
+    arrayid.append(tag.getID())
+radio = RadioButtons(rax, arrayid,
+                     [True, False, False, False],
+                     activecolor='r')
 
+
+def colorChange(labels):
+    print(labels)
+    for tag in arrayTag:
+        if labels == tag.getID():
+            print(tag.getTitle())
+            # a[1].scatter(x, y, color='r')
+            img, extent = myplot(tag.getList_X_coordinates(), tag.getList_Y_coordinates(), 64)
+            a[1].imshow(img, extent=extent, origin='lower', cmap=cm.jet)
+
+
+
+
+radio.on_clicked(colorChange)
 
 # ax.set_title('huy')
 # ax.invert_xaxis()
