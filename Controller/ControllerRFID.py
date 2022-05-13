@@ -60,6 +60,7 @@ class ControllerRFID:
             print(location['ele'])
             if location['ele'].isalpha():
                 tag = Tag(id,title,des)
+                tag.setCheck(True)
                 listTag.append(tag)
         return listTag
 
@@ -69,7 +70,7 @@ class ControllerRFID:
     # for anchor in listAnchor:
     #     anchor.printData()
 
-    listTag = getAllTagData()
-    for tag in listTag:
-        tag.printData()
+    # listTag = getAllTagData()
+    # for tag in listTag:
+    #     tag.printData()
 

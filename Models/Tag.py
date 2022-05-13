@@ -15,12 +15,12 @@ class Tag:
         self.__list_Y_coordinates = []
         self.__list_X_coordinates = []
 
-    def __init__(self):
-        self.__id = id
-        self.__title = ''
-        self.__description = ''
-        self.__list_Y_coordinates = []
-        self.__list_X_coordinates = []
+    # def __init__(self):
+    #     self.__id = id
+    #     self.__title = ''
+    #     self.__description = ''
+    #     self.__list_Y_coordinates = []
+    #     self.__list_X_coordinates = []
 
     def printData(self):
         print(self.__id, self.__title,self.__description, sep='\n')
