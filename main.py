@@ -4,6 +4,7 @@ import jmespath
 import json
 import websockets
 import time
+import array as arr
 from matplotlib import pyplot as plt, cm
 from matplotlib.widgets import Button, RadioButtons
 from scipy.ndimage import gaussian_filter
@@ -52,8 +53,18 @@ def readTag():
     loop = asyncio.get_event_loop()
 
     headmapid = 12
-    xheadmap = []
-    yheadmap = []
+    xheadmap = arr.array('d',[])
+    yheadmap = arr.array('d',[])
+    h = 0
+    for anchor in arrayAnchor:
+        if not anchor.getIsMaster():
+            h = h + 1
+            print('not master', anchor.getCurrentValuePosX(), anchor.getCurrentValuePosY())
+            xheadmap.append(float(anchor.getCurrentValuePosX()))
+            yheadmap.append(float(anchor.getCurrentValuePosY()))
+        # if h == 5:
+            # break
+
     while True:
         data = loop.run_until_complete(runTag())
         if data != None:

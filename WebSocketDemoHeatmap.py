@@ -59,7 +59,8 @@ def read():
             x.append(data[1])
             y.append(data[2])
             a = ax.flatten()
-
+            a[0].set_xlim([0, 50])
+            a[0].set_ylim([0, 50])
             a[0].scatter(x, y, color='r')
             a[0].plot(x, y, color='r')
             # a[0].subplots_adjust(left=0.3, top=0.1, bottom=0.1)

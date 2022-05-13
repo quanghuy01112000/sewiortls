@@ -62,10 +62,10 @@ async def hello():
         return data
     ws.close()
 #
-data = asyncio.run(hello())
+# data = asyncio.run(hello())
 
-# while True:
-#     data = asyncio.get_event_loop().run_until_complete(hello())
-asyncio.close()
+while True:
+    data = asyncio.get_event_loop().run_until_complete(hello())
+# asyncio.close()
 if data != None:
     print(data)
